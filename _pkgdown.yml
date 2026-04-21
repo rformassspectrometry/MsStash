@@ -1,0 +1,5 @@
+url: https://rformassspectrometry.github.io/MsStash
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
