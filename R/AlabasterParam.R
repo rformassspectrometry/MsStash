@@ -2,7 +2,7 @@
 #'
 #' @title Store MS data objects using the alabaster framework
 #'
-#' @aliases readObject
+#' @aliases AlabasterParam-class
 #'
 #' @name AlabasterParam
 #'
@@ -18,9 +18,10 @@
 #' programming languages such as Python or Javascript. This improves
 #' interoperability between application ecosystems.
 #'
-#' The *alabaster* package defines the [saveObject()] and [readObject()]
-#' methods that have to be implemented for specific data classes to enable
-#' saving to or reading from alabaster-based file formats.
+#' The *alabaster* package defines the [alabaster.base::saveObject()] and
+#' [alabaster.base::readObject()] methods that have to be implemented for
+#' specific data classes to enable saving to or reading from alabaster-based
+#' file formats.
 #'
 #' In addition, the *MsStash* package defines the `AlabasterParam` which can be
 #' used to write or read MS objects using the `saveMsObject()` and
@@ -46,13 +47,6 @@
 #'     Importantly, path should point to a **new** folder, i.e. a directory
 #'     that **does not already exist**.
 #'
-#' @param x MS data object to export.
-#'
-#' @param ... optional additional parameters passed to the downstream
-#'     functions.
-#'
-#' @inheritParams saveMsObject
-#'
 #' @return For `AlabasterParam()`: an instance of `AlabasterParam` class. For
 #'     `readObject()` the exported object in the specified path (depending on
 #'     the type of object defined in the *OBJECT* file in the path. For
@@ -72,6 +66,8 @@
 NULL
 
 #' @noRd
+#'
+#' @export
 setClass("AlabasterParam",
          contains = "PlainTextParam")
 

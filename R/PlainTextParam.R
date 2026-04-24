@@ -2,6 +2,8 @@
 #'
 #' @name PlainTextParam
 #'
+#' @aliases PlainTextParam-class
+#'
 #' @export
 #'
 #' @family MS object export and import formats.
@@ -27,10 +29,6 @@
 #'   are going to be stored/ should be loaded from. The default is
 #'   `path = tempdir()`.
 #'
-#' @param ... Additional parameters passed down to internal functions.
-#'
-#' @inheritParams saveMsObject
-#'
 #' @return For `PlainTextParam()`: a `PlainTextParam` class. `saveMsObject()`
 #' does not return anything but saves the object to collections of different
 #' plain text files to a folder. The `readMsObject()` method returns the
@@ -40,7 +38,7 @@
 #'
 #' @importFrom methods new
 #'
-#' \@importClassesFrom ProtGenerics Param
+#' @importClassesFrom ProtGenerics Param
 #'
 #' @examples
 #'
@@ -52,6 +50,8 @@
 NULL
 
 #' @noRd
+#'
+#' @export
 setClass("PlainTextParam",
          slots = c(path = "character"),
          contains = "Param",
@@ -69,12 +69,4 @@ setClass("PlainTextParam",
 #' @export
 PlainTextParam <- function(path = tempdir()) {
     new("PlainTextParam", path = path)
-}
-
-.check_directory_content <- function(path, x) {
-    for (f in x) {
-        if (!file.exists(file.path(path, f)))
-            stop("required file/directory '", f, "' not found in \"",
-                 path, "\"")
-    }
 }
