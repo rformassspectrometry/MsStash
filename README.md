@@ -121,7 +121,7 @@ Blood Metabolic Analysis Networks** and by the **Autonomous Province of
 Bolzano** under the **MetaRbolomics4Galaxy** project (CUP: D53C25001030003) from
 the *Joint Projects South Tyrol–Germany 2025* funding program.
 
-![EU Logo](https://github.com/rformassspectrometry/Metabonaut/raw/main/vignettes/images/EULogo.jpg)\
+![EU Logo](https://github.com/rformassspectrometry/Metabonaut/raw/main/vignettes/images/EULogo.jpg)
 
 
-![funding](https://github.com/rformassspectrometry/MsBackendMassIVE/raw/main/man/figures/SuedDFG-60.png)\
+![funding](https://github.com/rformassspectrometry/MsBackendMassIVE/raw/main/man/figures/SuedDFG-60.png)
