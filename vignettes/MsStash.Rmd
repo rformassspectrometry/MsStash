@@ -1,0 +1,211 @@
+---
+title: "Storage Modes of MS Data Objects"
+output:
+    BiocStyle::html_document:
+        toc_float: true
+vignette: >
+    %\VignetteIndexEntry{Storage Modes of MS Data Objects}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+    %\VignettePackage{MsStash}
+    %\VignetteDepends{MsStash,BiocStyle}
+---
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+library(BiocStyle)
+```
+
+# Introduction
+
+Data objects in R can be serialized to disk in R's *Rds* format using the base R
+`save()` function and re-imported using the `load()` function. This R-specific
+binary data format can however not be used or read by other programming
+languages preventing thus the exchange of R data objects between software or
+programming languages. The *MsStash* package defines basic classes and generic
+methods to export and import mass spectrometry data objects in various storage
+formats aiming to facilitate data exchange between software. This includes,
+among other formats, also storage of data objects using Bioconductor's
+`r Biocpkg("alabaster.base")` package.
+
+For export or import of MS data objects, the `saveMsObject()` and
+`readMsObject()` functions can be used. For `saveMsObject()`, the first
+parameter is the MS data object that should be stored, for `readMsObject()` it
+defines type of MS object that should be restored (returned). The second
+parameter `param` defines and configures the storage format of the MS data. The
+currently supported formats and the respective parameter objects are:
+
+- `PlainTextParam`: storage of data in (a custom) plain text file format.
+- `AlabasterParam`: storage of MS data using Bioconductor's
+  `r Biocpkg("alabaster.base")` framework based files in HDF5 and JSON format.
+
+These storage formats are described in more details in the following sections.
+
+An example use of these functions and parameters: `saveMsObject(x, param =
+PlainTextParam(storage_path))` to store an MS data object assigned to a variable
+`x` to a directory `storage_path` using the plain text file format. To restore
+the data (assuming `x` was an instance of a `MsExperiment` class):
+`readMsObject(MsExperiment(), param = PlainTextParam(storage_path))`.
+
+# Installation
+
+The package can be installed with the *BiocManager* package. To install
+*BiocManager* use `install.packages("BiocManager")` and, after that,
+`BiocManager::install("RforMassSpectrometry/MsStash")` to install this package.
+
+
+# Example implementations
+
+To illustrate how the save/read functionality can be implemented for a specific
+data class, we first define a simple toy R S4 object to represent the data from
+a single mass spectrum. This `MySpectrum` class contains slots to hold the
+spectrum's *m/z* and intensity values as well as some (limited) metadata.
+
+```{r}
+#' Class definition
+setClass("MySpectrum",
+         slots = c(mz = "numeric",
+                   intensity = "numeric",
+                   rtime = "numeric",
+                   msl = "integer"),
+         prototype = prototype(
+             mz = numeric(),
+             intensity = numeric(),
+             rtime = numeric(),
+             msl = integer()))
+
+#' Default constructor function
+MySpectrum <- function(mz = numeric(), intensity = numeric(),
+                       rtime = numeric(), msl = integer()) {
+    stopifnot(length(mz) == length(intensity))
+    if (length(mz) && !length(rtime)) rtime <- NA_real_
+    if (length(mz) && !length(msl)) msl <- NA_integer_
+    new("MySpectrum", mz = mz, intensity = intensity, rtime = rtime,
+        msl = as.integer(msl))
+}
+```
+
+We can now create an example `MySpectrum` object.
+
+```{r}
+s <- MySpectrum(c(1.4, 1.6, 1.9, 2.56), c(123.1, 1235.3, 12.45, 51.5))
+s
+```
+
+## Suggested properties of implemented methods
+
+To ensure consistency, the `saveMsObject()` should:
+
+- first create the directory to which the data should be exported (defined by
+  param `path`).
+- throw an error if the directory exists or contains already an exported object
+  (avoiding thus accidental overwriting and eventual data
+  corruption/inconsistencies).
+
+Both methods support also `...`, hence, if needed, additional parameters can be
+added to an implementation of the generic method if needed.
+
+## `PlainTextParam`
+
+Storage of MS data objects in *plain* text format aims to support an easy
+exchange of data, and in particular analysis results, with external software,
+such as [MS-DIAL](https://systemsomicslab.github.io/compms/msdial/main.html) or
+[mzmine3](http://mzmine.github.io/download.html). In most cases, the data is
+stored as tabulator delimited text files simplifying the use of the data and
+results across multiple programming languages, or their import into spreadsheet
+applications. MS data objects stored in plain text format can also be fully
+re-imported into R providing thus an alternative, and more flexible, object
+serialization approach than the R internal *Rds*/*RData* format.
+
+We implement a `saveMsObject()` method for our `MySpectrum` class and the
+`PlainTextParam`. This function first creates the required directory and throws
+an error if an result file is already stored there. Then it exports the data:
+for our example we store the data of the object into a single text file in a
+custom format we define: the metadata if first written to the file, one line per
+metadata item followed by the *m/z* and intensity values, each *m/z*-intensity
+pair in one line separated by a tabulator.
+
+```{r}
+library(MsStash)
+setMethod("saveMsObject", signature(object = "MySpectrum",
+                                    param = "PlainTextParam"),
+          function(object, param) {
+              dir.create(path = param@path, recursive = TRUE,
+                         showWarnings = FALSE)
+              fl <- file.path(param@path, "my_spectrum.txt")
+              if (file.exists(fl))
+                  stop("Overwriting an existing result object is not ",
+                       "supported.")
+              ## Write the type of object as a comment followed by the
+              ## metadata.
+              writeLines(c(paste0("# ", class(object)[1L]),
+                           paste0("rtime:", object@rtime),
+                           paste0("msl:", object@msl)), con = fl)
+              ## Write the peak data, i.e. m/z and intensity values
+              write.table(cbind(object@mz, object@intensity), file = fl,
+                          sep = "\t", append = TRUE, col.names = FALSE,
+                          row.names = FALSE)
+          })
+```
+
+We next export our example object `s` with the `saveMsData()` method to a
+temporary folder.
+
+```{r}
+p <- PlainTextParam(path = file.path(tempdir(), "text_format"))
+saveMsObject(s, p)
+```
+
+The data was thus exported to this text file. The individual lines are:
+
+```{r}
+readLines(file.path(p@path, "my_spectrum.txt"))
+```
+
+We next implement the `readMsObject()` method for this class. This function will
+read the text file content and assign the imported values to the different slots
+of the `MySpectrum` class.
+
+```{r}
+setMethod("readMsObject", signature(object = "MySpectrum",
+                                    param = "PlainTextParam"),
+          function(object, param) {
+              fl <- file.path(param@path, "my_spectrum.txt")
+              if (!file.exists(fl))
+                  stop("my_spectrum.txt not found in the provided path")
+              l <- readLines(fl, n = 3) # read the comment and the metadata
+              p <- read.table(fl, sep = "\t", skip = 3)
+              MySpectrum(
+                  mz = p[, 1L], intensity = p[, 2L],
+                  rtime = suppressWarnings(
+                      as.numeric(sub("rtime:", "", l[2], fixed = TRUE))),
+                  msl = suppressWarnings(
+                      as.integer(sub("msl:", "", l[3], fixed = TRUE))))
+          })
+```
+
+We can now restore our `MySpectrum` object with the `readMsObject()` method from
+the exported text file:
+
+```{r}
+p <- PlainTextParam(path = file.path(tempdir(), "text_format"))
+b <- readMsObject(MySpectrum(), p)
+b
+```
+
+
+## `AlabasterParam`
+
+The [alabaster framework](https://github.com/ArtifactDB/alabaster.base) and
+related Bioconductor package `r Biocpkg("alabaster.base")` implements methods to
+save a variety of R/Bioconductor objects to on-disk representations based on
+standard file formats like HDF5 and JSON. This ensures that Bioconductor objects
+can be easily read from other languages like Python and Javascript. With
+`AlabasterParam`, *MsStash* supports export of MS data objects into these
+storage formats.
+
+# Session information
+
+```{r}
+sessionInfo()
+```
