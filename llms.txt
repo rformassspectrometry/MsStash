@@ -1,0 +1,150 @@
+# MsStash
+
+*Store your mass spectrometry result objects in a safe place*
+
+------------------------------------------------------------------------
+
+## Overview
+
+**MsStash** provides flexible, language-agnostic import and export
+capabilities for mass spectrometry (MS) data objects in R. It
+facilitates interoperability by supporting various open file formats
+such as JSON, HDF5, plain text, and domain-specific standards like
+**mzTab-M** or **MetaboLights** archives.
+
+While R’s native
+[`save()`](https://rdrr.io/r/base/save.html)/[`load()`](https://rdrr.io/r/base/load.html)
+functions allow object serialization, they rely on R-specific binary
+formats, making cross-platform data exchange difficult. **MsStash**
+addresses this by introducing standardized file formats and programmatic
+interfaces, simplifying integration between R-based tools and external
+software ecosystems.
+
+------------------------------------------------------------------------
+
+## Key Features
+
+- 📦 Export/import **MS analysis results objects** across interoperable
+  file formats
+- 🧩 Modular design via S4 **parameter classes** and generic methods
+- 🔄 Integration with [Bioconductor](https://bioconductor.org) packages
+  like **Spectra**, **MsExperiment**, **xcms**, and **alabaster.base**
+- 🔧 Support for plain text, JSON+HDF5, mzTab-M, and MetaboLights
+  repository data
+
+------------------------------------------------------------------------
+
+## Package Architecture
+
+### Generic Methods
+
+- `saveMsObject(object, param)`
+- `readMsObject(object, param)`
+
+These methods delegate the actual file handling based on the class of
+the supplied `param` object (e.g., `PlainTextParam`, `AlabasterParam`).
+
+### Parameter Classes
+
+Each format can be configured with their respective S4 class:
+
+| Class               | Purpose                             |
+|---------------------|-------------------------------------|
+| `PlainTextParam`    | Text-based tabular storage          |
+| `AlabasterParam`    | HDF5/JSON archival via alabaster    |
+| `mzTabParam`        | Export to mzTab-M (MS metabolomics) |
+| `MetaboLightsParam` | Import from MetaboLights repository |
+
+Implementation of the import/export methods for individual MS data
+structures are implemented in the corresponding R packages.
+
+------------------------------------------------------------------------
+
+## Supported Formats
+
+### ✅ Plain Text (`PlainTextParam`)
+
+- Tab-delimited export/import for key objects:
+
+### ✅ Alabaster (`AlabasterParam`)
+
+- Structured archival using HDF5 and JSON (via
+  [`alabaster.base`](https://doi.org/doi:10.18129/B9.bioc.alabaster.base))
+
+------------------------------------------------------------------------
+
+## Planned Features & Contributions Welcome
+
+Future development directions include:
+
+- 🔄 **Import mzTab-M** into `SummarizedExperiment`
+- 🔄 **Import mzTab-M** into `QFeatures`
+- 🔄 **Generic ISA-tab** import integration (if justified)
+
+We welcome and encourage contributions — see below for how to get
+involved!
+
+------------------------------------------------------------------------
+
+## Contributing
+
+We appreciate contributions of all kinds — from bug fixes and tests to
+documentation and new format support.
+
+If you’re planning to contribute:
+
+1.  Read our [contribution
+    guidelines](https://rformassspectrometry.github.io/RforMassSpectrometry/articles/RforMassSpectrometry.html#contributions)
+2.  Follow the [RforMassSpectrometry style
+    guide](https://rformassspectrometry.github.io/RforMassSpectrometry/articles/RforMassSpectrometry.html)
+3.  Fork the repo, create a branch, implement your changes, and submit a
+    pull request
+4.  For new formats, implement:
+    - A `*Param` S4 class
+
+    - A
+      [`readMsObject()`](https://rformassspectrometry.github.io/MsStash/reference/saveMsObject.md)
+      and/or
+      [`saveMsObject()`](https://rformassspectrometry.github.io/MsStash/reference/saveMsObject.md)
+      method
+
+    - ## Tests in `tests/testthat/`
+
+## License
+
+This package is licensed under the **Artistic 2.0 License**: 📄
+<https://opensource.org/licenses/Artistic-2.0>
+
+Documentation (manuals, vignettes) is licensed under **CC BY-SA 4.0**:
+📄 <https://creativecommons.org/licenses/by-sa/4.0/>
+
+# Funding information
+
+Part of this work was funded by the **European Union** under the
+**HORIZON-MSCA-2021** project **101073062: HUMAN – Harmonising and
+Unifying Blood Metabolic Analysis Networks** and by the **Autonomous
+Province of Bolzano** under the **MetaRbolomics4Galaxy** project (CUP:
+D53C25001030003) from the *Joint Projects South Tyrol–Germany 2025*
+funding program.
+
+![funding](https://github.com/rformassspectrometry/MsBackendMassIVE/raw/main/man/figures/SuedDFG-60.png)![EU
+Logo](https://github.com/rformassspectrometry/Metabonaut/raw/main/vignettes/images/EULogo.jpg)
+
+# Package index
+
+## All functions
+
+- [`AlabasterParam()`](https://rformassspectrometry.github.io/MsStash/reference/AlabasterParam.md)
+  : Store MS data objects using the alabaster framework
+- [`PlainTextParam()`](https://rformassspectrometry.github.io/MsStash/reference/PlainTextParam.md)
+  : Store contents of MS objects as plain text files
+- [`saveMsObject()`](https://rformassspectrometry.github.io/MsStash/reference/saveMsObject.md)
+  [`readMsObject()`](https://rformassspectrometry.github.io/MsStash/reference/saveMsObject.md)
+  : Save and load MS data objects to and from different file formats
+
+# Articles
+
+### All vignettes
+
+- [Storage Modes of MS Data
+  Objects](https://rformassspectrometry.github.io/MsStash/articles/MsStash.md):
