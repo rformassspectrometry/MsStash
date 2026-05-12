@@ -17,13 +17,13 @@ Source:
 [`DESCRIPTION`](https://github.com/RforMassSpectrometry/MsStash/blob/main/DESCRIPTION)
 
 Rainer J, Louail P (2026). *MsStash: Infrastructure to serialize and
-restore mass spectrometry data objects*. R package version 0.0.1,
+restore mass spectrometry data objects*. R package version 0.97.0,
 <https://github.com/RforMassSpectrometry/MsStash>.
 
     @Manual{,
       title = {MsStash: Infrastructure to serialize and restore mass spectrometry data objects},
       author = {Johannes Rainer and Philippine Louail},
       year = {2026},
-      note = {R package version 0.0.1},
+      note = {R package version 0.97.0},
       url = {https://github.com/RforMassSpectrometry/MsStash},
     }

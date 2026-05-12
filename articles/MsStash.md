@@ -12,7 +12,7 @@ package defines basic classes and generic methods to export and import
 mass spectrometry data objects in various storage formats aiming to
 facilitate data exchange between software. This includes, among other
 formats, also storage of data objects using Bioconductor’s
-*[alabaster.base](https://bioconductor.org/packages/3.23/alabaster.base)*
+*[alabaster.base](https://bioconductor.org/packages/3.24/alabaster.base)*
 package.
 
 For export or import of MS data objects, the
@@ -31,7 +31,7 @@ parameter objects are:
 - `PlainTextParam`: storage of data in (a custom) plain text file
   format.
 - `AlabasterParam`: storage of MS data using Bioconductor’s
-  *[alabaster.base](https://bioconductor.org/packages/3.23/alabaster.base)*
+  *[alabaster.base](https://bioconductor.org/packages/3.24/alabaster.base)*
   framework based files in HDF5 and JSON format.
 
 These storage formats are described in more details in the following
@@ -120,6 +120,11 @@ should:
 Both methods support also `...`, hence, if needed, additional parameters
 can be added to an implementation of the generic method if needed.
 
+``` r
+
+library(MsStash)
+```
+
 ### `PlainTextParam`
 
 Storage of MS data objects in *plain* text format aims to support an
@@ -146,7 +151,7 @@ line per metadata item followed by the *m/z* and intensity values, each
 
 ``` r
 
-library(MsStash)
+#' Write example class to a plain text file
 setMethod("saveMsObject", signature(object = "MySpectrum",
                                     param = "PlainTextParam"),
           function(object, param) {
@@ -195,6 +200,7 @@ class.
 
 ``` r
 
+#' Read example object from plain text file storage format
 setMethod("readMsObject", signature(object = "MySpectrum",
                                     param = "PlainTextParam"),
           function(object, param) {
@@ -240,12 +246,231 @@ b
 
 The [alabaster framework](https://github.com/ArtifactDB/alabaster.base)
 and related Bioconductor package
-*[alabaster.base](https://bioconductor.org/packages/3.23/alabaster.base)*
+*[alabaster.base](https://bioconductor.org/packages/3.24/alabaster.base)*
 implements methods to save a variety of R/Bioconductor objects to
 on-disk representations based on standard file formats like HDF5 and
 JSON. This ensures that Bioconductor objects can be easily read from
 other languages like Python and Javascript. With `AlabasterParam`,
-*MsStash* supports export of MS data objects into these storage formats.
+*MsStash* provides a parameter class to configure saving MS data objects
+in the *alabaster* storage format.
+
+To enable writing in this format a
+[`saveMsObject()`](https://rformassspectrometry.github.io/MsStash/reference/saveMsObject.md)
+method should be implemented for the MS data object and
+`AlabasterParam`. To enable full *alabaster* support it is also
+suggested to implement the
+[`alabaster.base::saveObject`](https://rdrr.io/pkg/alabaster.base/man/saveObject.html)
+method, a validation method and a function to read from an alabaster
+format. For more details refer also to the package vignette of the
+*[alabaster.base](https://bioconductor.org/packages/3.24/alabaster.base)*
+package, in particular chapter 5 *Extending to new classes*.
+
+We below define a
+[`saveObject()`](https://rdrr.io/pkg/alabaster.base/man/saveObject.html)
+method. The generic for this method is defined in the *alabaster.base*
+package. While it would be possible to simply save the data as simple
+text files as we did above, we use *alabaster*’s strategy to allow
+storage of more complex objects (such as S4 objects in the individual
+slots). This uses
+[`altSaveObject()`](https://rdrr.io/pkg/alabaster.base/man/altSaveObject.html)
+and
+[`altReadObject()`](https://rdrr.io/pkg/alabaster.base/man/altReadObject.html)
+to save individual slots or parent/child classes in sub-directories of
+`path`. For each of these classes, a
+[`saveObject()`](https://rdrr.io/pkg/alabaster.base/man/saveObject.html)
+needs to be defined.
+
+``` r
+
+library(alabaster.base)
+
+setMethod("saveObject", "MySpectrum", function(x, path, ...) {
+    ## Create the directory where to save the data
+    dir.create(path = path, recursive = TRUE, showWarnings = FALSE)
+    ## Create an "object" file; this defines the type of object stored in path
+    saveObjectFile(path, "my_spectrum")
+    ## save each slot into it's own directory
+    altSaveObject(x@mz, path = file.path(path, "mz"))
+    altSaveObject(x@intensity, path = file.path(path, "intensity"))
+    altSaveObject(x@rtime, path = file.path(path, "retention_time"))
+    altSaveObject(x@msl, path = file.path(path, "ms_level"))
+})
+```
+
+We next need to implement a *validation function* for the stash
+(directory). For our example we simply check that the `path` contains
+the expected sub-directories with the object’s content. This function
+needs then to be registered with the
+[`registerValidateObjectFunction()`](https://rdrr.io/pkg/alabaster.base/man/validateObject.html)
+method for our class.
+
+``` r
+
+#' Define a helper function to check that the folder contains all
+#' expected sub-directories.
+validateMySpectrum <- function(path, metadata) {
+    if (!dir.exists(path))
+        stop("Directory ", path, " does not exist")
+    req_dir <- c("mz", "intensity", "retention_time", "ms_level")
+    if (any(miss <- !dir.exists(file.path(path, req_dir))))
+        stop("Required directories ",
+             paste0("\"", req_dir[miss], "\"", collapse = ", "),
+             " not found in ", path)
+}
+
+#' Register the validation function
+registerValidateObjectFunction("my_spectrum", validateMySpectrum)
+```
+
+    ## NULL
+
+Finally we define the function to read the data back from the stash. We
+then register this function with *alabaster*’s
+[`registerReadObjectFunction()`](https://rdrr.io/pkg/alabaster.base/man/readObject.html)
+function.
+
+``` r
+
+#' Define a function that can read from an alabaster-based serialization
+#' of `MySpectrum` objects
+readMySpectrum <- function(path, metadata, ...) {
+    validateMySpectrum(path)
+    ## Read the data from individual sub-directories
+    mz <- altReadObject(file.path(path, "mz"))
+    int <- altReadObject(file.path(path, "intensity"))
+    rtime <- altReadObject(file.path(path, "retention_time"))
+    msl <- altReadObject(file.path(path, "ms_level"))
+    MySpectrum(mz = mz, intensity = int, rtime = rtime, msl = msl)
+}
+
+#' Register the read function
+registerReadObjectFunction("my_spectrum", readMySpectrum)
+```
+
+Registration of the validation and read functions is generally done in
+the extension package’s `onLoad()` function.
+
+With these functions defined and registered, we can store an instance of
+`MySpectrum` directly with *alabaster*’s
+[`saveObject()`](https://rdrr.io/pkg/alabaster.base/man/saveObject.html)
+method:
+
+``` r
+
+#' Define the path where we want to export out data
+p <- file.path(tempdir(), "alabaster_export")
+
+#' Save the object
+saveObject(s, path = p)
+```
+
+This saved the object’s content to the directory specified with `path`.
+The content of this folder is:
+
+``` r
+
+library(fs)
+dir_tree(p)
+```
+
+    ## /tmp/Rtmpk6fEdu/alabaster_export
+    ## ├── OBJECT
+    ## ├── _environment.json
+    ## ├── intensity
+    ## │   ├── OBJECT
+    ## │   └── contents.h5
+    ## ├── ms_level
+    ## │   ├── OBJECT
+    ## │   └── contents.h5
+    ## ├── mz
+    ## │   ├── OBJECT
+    ## │   └── contents.h5
+    ## └── retention_time
+    ##     ├── OBJECT
+    ##     └── contents.h5
+
+We can read the serialized object again as a `MySpectrum` object:
+
+``` r
+
+b <- readObject(p)
+b
+```
+
+    ## An object of class "MySpectrum"
+    ## Slot "mz":
+    ## [1] 1.40 1.60 1.90 2.56
+    ## 
+    ## Slot "intensity":
+    ## [1]  123.10 1235.30   12.45   51.50
+    ## 
+    ## Slot "rtime":
+    ## [1] NA
+    ## 
+    ## Slot "msl":
+    ## [1] NA
+
+We next implement the
+[`saveMsObject()`](https://rformassspectrometry.github.io/MsStash/reference/saveMsObject.md)
+and
+[`readMsObject()`](https://rformassspectrometry.github.io/MsStash/reference/saveMsObject.md)
+methods for `MySpectrum` and `AlabasterParam`. These can simply re-use
+the functions implemented above.
+
+``` r
+
+#' Write example class to a plain text file
+setMethod("saveMsObject", signature(object = "MySpectrum",
+                                    param = "AlabasterParam"),
+          function(object, param) {
+              if (file.exists(file.path(param@path, "OBJECT")))
+                  stop("'path' contains already an MS data stash. Overwriting",
+                       " is not supported. Please remove 'path' first.")
+              saveObject(object, param@path)
+          })
+
+#' Read example object from plain text file storage format
+setMethod("readMsObject", signature(object = "MySpectrum",
+                                    param = "AlabasterParam"),
+          function(object, param) {
+              readMySpectrum(param@path)
+          })
+```
+
+We can now stash our MS object in either the text file-based format
+(`PlainTextParam`) or the alabaster-based format (`AlabasterParam`).
+Below we write it using the alabaster approach.
+
+``` r
+
+p <- file.path(tempdir(), "alabaster_format_2")
+ap <- AlabasterParam(p)
+
+saveMsObject(s, ap)
+```
+
+To read the data back we can then use
+[`readMsObject()`](https://rformassspectrometry.github.io/MsStash/reference/saveMsObject.md)
+specifying in addition the type of object we want to read.
+
+``` r
+
+b <- readMsObject(MySpectrum(), ap)
+b
+```
+
+    ## An object of class "MySpectrum"
+    ## Slot "mz":
+    ## [1] 1.40 1.60 1.90 2.56
+    ## 
+    ## Slot "intensity":
+    ## [1]  123.10 1235.30   12.45   51.50
+    ## 
+    ## Slot "rtime":
+    ## [1] NA
+    ## 
+    ## Slot "msl":
+    ## [1] NA
 
 ## Session information
 
@@ -254,7 +479,7 @@ other languages like Python and Javascript. With `AlabasterParam`,
 sessionInfo()
 ```
 
-    ## R Under development (unstable) (2026-04-19 r89916)
+    ## R version 4.6.0 (2026-04-24)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -277,16 +502,22 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] MsStash_0.0.1    BiocStyle_2.39.0
+    ## [1] fs_2.1.0              alabaster.base_1.13.0 MsStash_0.97.0       
+    ## [4] BiocStyle_2.41.0     
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] cli_3.6.6           knitr_1.51          rlang_1.2.0        
-    ##  [4] xfun_0.57           ProtGenerics_1.43.0 otel_0.2.0         
-    ##  [7] textshaping_1.0.5   jsonlite_2.0.0      htmltools_0.5.9    
-    ## [10] ragg_1.5.2          sass_0.4.10         rmarkdown_2.31     
-    ## [13] evaluate_1.0.5      jquerylib_0.1.4     fastmap_1.2.0      
-    ## [16] yaml_2.3.12         lifecycle_1.0.5     bookdown_0.46      
-    ## [19] BiocManager_1.30.27 compiler_4.7.0      fs_2.1.0           
-    ## [22] htmlwidgets_1.6.4   systemfonts_1.3.2   digest_0.6.39      
-    ## [25] R6_2.6.1            bslib_0.10.0        tools_4.7.0        
-    ## [28] pkgdown_2.2.0.9000  cachem_1.1.0        desc_1.4.3
+    ##  [1] jsonlite_2.0.0           compiler_4.6.0           BiocManager_1.30.27     
+    ##  [4] crayon_1.5.3             Rcpp_1.1.1-1.1           rhdf5filters_1.25.0     
+    ##  [7] jquerylib_0.1.4          systemfonts_1.3.2        textshaping_1.0.5       
+    ## [10] yaml_2.3.12              fastmap_1.2.0            R6_2.6.1                
+    ## [13] generics_0.1.4           ProtGenerics_1.45.0      knitr_1.51              
+    ## [16] BiocGenerics_0.59.0      htmlwidgets_1.6.4        tibble_3.3.1            
+    ## [19] bookdown_0.46            desc_1.4.3               pillar_1.11.1           
+    ## [22] bslib_0.10.0             rlang_1.2.0              cachem_1.1.0            
+    ## [25] xfun_0.57                sass_0.4.10              otel_0.2.0              
+    ## [28] cli_3.6.6                magrittr_2.0.5           pkgdown_2.2.0.9000      
+    ## [31] Rhdf5lib_2.1.0           digest_0.6.39            alabaster.schemas_1.13.0
+    ## [34] rhdf5_2.57.0             lifecycle_1.0.5          vctrs_0.7.3             
+    ## [37] S4Vectors_0.51.1         glue_1.8.1               evaluate_1.0.5          
+    ## [40] ragg_1.5.2               stats4_4.6.0             rmarkdown_2.31          
+    ## [43] pkgconfig_2.0.3          tools_4.6.0              htmltools_0.5.9
