@@ -8,7 +8,7 @@ vignette: >
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
     %\VignettePackage{MsStash}
-    %\VignetteDepends{MsStash,BiocStyle}
+    %\VignetteDepends{MsStash,BiocStyle,alabaster.base,fs}
 ---
 
 ```{r, echo = FALSE, message = FALSE}
@@ -52,7 +52,6 @@ the data (assuming `x` was an instance of a `MsExperiment` class):
 The package can be installed with the *BiocManager* package. To install
 *BiocManager* use `install.packages("BiocManager")` and, after that,
 `BiocManager::install("RforMassSpectrometry/MsStash")` to install this package.
-
 
 # Example implementations
 
@@ -105,6 +104,10 @@ To ensure consistency, the `saveMsObject()` should:
 Both methods support also `...`, hence, if needed, additional parameters can be
 added to an implementation of the generic method if needed.
 
+```{r}
+library(MsStash)
+```
+
 ## `PlainTextParam`
 
 Storage of MS data objects in *plain* text format aims to support an easy
@@ -126,7 +129,7 @@ metadata item followed by the *m/z* and intensity values, each *m/z*-intensity
 pair in one line separated by a tabulator.
 
 ```{r}
-library(MsStash)
+#' Write example class to a plain text file
 setMethod("saveMsObject", signature(object = "MySpectrum",
                                     param = "PlainTextParam"),
           function(object, param) {
@@ -167,6 +170,7 @@ read the text file content and assign the imported values to the different slots
 of the `MySpectrum` class.
 
 ```{r}
+#' Read example object from plain text file storage format
 setMethod("readMsObject", signature(object = "MySpectrum",
                                     param = "PlainTextParam"),
           function(object, param) {
@@ -193,7 +197,6 @@ b <- readMsObject(MySpectrum(), p)
 b
 ```
 
-
 ## `AlabasterParam`
 
 The [alabaster framework](https://github.com/ArtifactDB/alabaster.base) and
@@ -201,8 +204,153 @@ related Bioconductor package `r Biocpkg("alabaster.base")` implements methods to
 save a variety of R/Bioconductor objects to on-disk representations based on
 standard file formats like HDF5 and JSON. This ensures that Bioconductor objects
 can be easily read from other languages like Python and Javascript. With
-`AlabasterParam`, *MsStash* supports export of MS data objects into these
-storage formats.
+`AlabasterParam`, *MsStash* provides a parameter class to configure saving MS
+data objects in the *alabaster* storage format.
+
+To enable writing in this format a `saveMsObject()` method should be implemented
+for the MS data object and `AlabasterParam`. To enable full *alabaster* support
+it is also suggested to implement the `alabaster.base::saveObject` method, a
+validation method and a function to read from an alabaster format. For more
+details refer also to the package vignette of the `r Biocpkg("alabaster.base")`
+package, in particular chapter 5 *Extending to new classes*.
+
+We below define a `saveObject()` method. The generic for this method is defined
+in the *alabaster.base* package. While it would be possible to simply save the
+data as simple text files as we did above, we use *alabaster*'s strategy to
+allow storage of more complex objects (such as S4 objects in the individual
+slots). This uses `altSaveObject()` and `altReadObject()` to save individual
+slots or parent/child classes in sub-directories of `path`. For each of these
+classes, a `saveObject()` needs to be defined.
+
+```{r}
+library(alabaster.base)
+
+setMethod("saveObject", "MySpectrum", function(x, path, ...) {
+    ## Create the directory where to save the data
+    dir.create(path = path, recursive = TRUE, showWarnings = FALSE)
+    ## Create an "object" file; this defines the type of object stored in path
+    saveObjectFile(path, "my_spectrum")
+    ## save each slot into it's own directory
+    altSaveObject(x@mz, path = file.path(path, "mz"))
+    altSaveObject(x@intensity, path = file.path(path, "intensity"))
+    altSaveObject(x@rtime, path = file.path(path, "retention_time"))
+    altSaveObject(x@msl, path = file.path(path, "ms_level"))
+})
+```
+
+We next need to implement a *validation function* for the stash (directory). For
+our example we simply check that the `path` contains the expected
+sub-directories with the object's content. This function needs then to be
+registered with the `registerValidateObjectFunction()` method for our class.
+
+```{r}
+#' Define a helper function to check that the folder contains all
+#' expected sub-directories.
+validateMySpectrum <- function(path, metadata) {
+    if (!dir.exists(path))
+        stop("Directory ", path, " does not exist")
+    req_dir <- c("mz", "intensity", "retention_time", "ms_level")
+    if (any(miss <- !dir.exists(file.path(path, req_dir))))
+        stop("Required directories ",
+             paste0("\"", req_dir[miss], "\"", collapse = ", "),
+             " not found in ", path)
+}
+
+#' Register the validation function
+registerValidateObjectFunction("my_spectrum", validateMySpectrum)
+```
+
+Finally we define the function to read the data back from the stash. We then
+register this function with *alabaster*'s `registerReadObjectFunction()`
+function.
+
+```{r}
+#' Define a function that can read from an alabaster-based serialization
+#' of `MySpectrum` objects
+readMySpectrum <- function(path, metadata, ...) {
+    validateMySpectrum(path)
+    ## Read the data from individual sub-directories
+    mz <- altReadObject(file.path(path, "mz"))
+    int <- altReadObject(file.path(path, "intensity"))
+    rtime <- altReadObject(file.path(path, "retention_time"))
+    msl <- altReadObject(file.path(path, "ms_level"))
+    MySpectrum(mz = mz, intensity = int, rtime = rtime, msl = msl)
+}
+
+#' Register the read function
+registerReadObjectFunction("my_spectrum", readMySpectrum)
+```
+
+Registration of the validation and read functions is generally done in the
+extension package's `onLoad()` function.
+
+With these functions defined and registered, we can store an instance of
+`MySpectrum` directly with *alabaster*'s `saveObject()` method:
+
+```{r}
+#' Define the path where we want to export out data
+p <- file.path(tempdir(), "alabaster_export")
+
+#' Save the object
+saveObject(s, path = p)
+```
+
+This saved the object's content to the directory specified with `path`. The
+content of this folder is:
+
+```{r}
+library(fs)
+dir_tree(p)
+```
+
+We can read the serialized object again as a `MySpectrum` object:
+
+```{r}
+b <- readObject(p)
+b
+```
+
+We next implement the `saveMsObject()` and `readMsObject()` methods for
+`MySpectrum` and `AlabasterParam`. These can simply re-use the functions
+implemented above.
+
+```{r}
+#' Write example class to a plain text file
+setMethod("saveMsObject", signature(object = "MySpectrum",
+                                    param = "AlabasterParam"),
+          function(object, param) {
+              if (file.exists(file.path(param@path, "OBJECT")))
+                  stop("'path' contains already an MS data stash. Overwriting",
+                       " is not supported. Please remove 'path' first.")
+              saveObject(object, param@path)
+          })
+
+#' Read example object from plain text file storage format
+setMethod("readMsObject", signature(object = "MySpectrum",
+                                    param = "AlabasterParam"),
+          function(object, param) {
+              readMySpectrum(param@path)
+          })
+```
+
+We can now stash our MS object in either the text file-based format
+(`PlainTextParam`) or the alabaster-based format (`AlabasterParam`). Below we
+write it using the alabaster approach.
+
+```{r}
+p <- file.path(tempdir(), "alabaster_format_2")
+ap <- AlabasterParam(p)
+
+saveMsObject(s, ap)
+```
+
+To read the data back we can then use `readMsObject()` specifying in addition
+the type of object we want to read.
+
+```{r}
+b <- readMsObject(MySpectrum(), ap)
+b
+```
 
 # Session information
 

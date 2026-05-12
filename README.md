@@ -2,7 +2,6 @@
 
 *Store your mass spectrometry result objects in a safe place*
 
-
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![R-CMD-check-bioc](https://github.com/RforMassSpectrometry/MsStash/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/RforMassSpectrometry/MsStash/actions?query=workflow%3AR-CMD-check-bioc)
 [![codecov](https://codecov.io/gh/rformassspectrometry/MsStash/graph/badge.svg?token=D8zjkGdgnY)](https://codecov.io/gh/rformassspectrometry/MsStash)
@@ -113,13 +112,17 @@ Documentation (manuals, vignettes) is licensed under **CC BY-SA 4.0**:
 📄 [https://creativecommons.org/licenses/by-sa/4.0/](https://creativecommons.org/licenses/by-sa/4.0/)
 
 
+---
+
 # Funding information
 
 Part of this work was funded by the **European Union** under the
 **HORIZON-MSCA-2021** project **101073062: HUMAN – Harmonising and Unifying
-Blood Metabolic Analysis Networks** and by the **Autonomous Province of
+Blood Metabolic Analysis Networks**, by the **Autonomous Province of
 Bolzano** under the **MetaRbolomics4Galaxy** project (CUP: D53C25001030003) from
-the *Joint Projects South Tyrol–Germany 2025* funding program.
+the *Joint Projects South Tyrol–Germany 2025* funding program and by the DFG
+grant
+no. [564004112](https://gepris.dfg.de/gepris/projekt/564004112?language=en).
 
 ![EU Logo](https://github.com/rformassspectrometry/Metabonaut/raw/main/vignettes/images/EULogo.jpg)
 
