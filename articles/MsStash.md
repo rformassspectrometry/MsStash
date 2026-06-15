@@ -373,7 +373,7 @@ library(fs)
 dir_tree(p)
 ```
 
-    ## /tmp/Rtmpk6fEdu/alabaster_export
+    ## /tmp/Rtmp9U6oi0/alabaster_export
     ## ├── OBJECT
     ## ├── _environment.json
     ## ├── intensity
@@ -511,13 +511,13 @@ sessionInfo()
     ##  [7] jquerylib_0.1.4          systemfonts_1.3.2        textshaping_1.0.5       
     ## [10] yaml_2.3.12              fastmap_1.2.0            R6_2.6.1                
     ## [13] generics_0.1.4           ProtGenerics_1.45.0      knitr_1.51              
-    ## [16] BiocGenerics_0.59.0      htmlwidgets_1.6.4        tibble_3.3.1            
+    ## [16] BiocGenerics_0.59.7      htmlwidgets_1.6.4        tibble_3.3.1            
     ## [19] bookdown_0.46            desc_1.4.3               pillar_1.11.1           
-    ## [22] bslib_0.10.0             rlang_1.2.0              cachem_1.1.0            
-    ## [25] xfun_0.57                sass_0.4.10              otel_0.2.0              
+    ## [22] bslib_0.11.0             rlang_1.2.0              cachem_1.1.0            
+    ## [25] xfun_0.58                sass_0.4.10              otel_0.2.0              
     ## [28] cli_3.6.6                magrittr_2.0.5           pkgdown_2.2.0.9000      
     ## [31] Rhdf5lib_2.1.0           digest_0.6.39            alabaster.schemas_1.13.0
-    ## [34] rhdf5_2.57.0             lifecycle_1.0.5          vctrs_0.7.3             
-    ## [37] S4Vectors_0.51.1         glue_1.8.1               evaluate_1.0.5          
+    ## [34] rhdf5_2.57.1             lifecycle_1.0.5          vctrs_0.7.3             
+    ## [37] S4Vectors_0.51.3         glue_1.8.1               evaluate_1.0.5          
     ## [40] ragg_1.5.2               stats4_4.6.0             rmarkdown_2.31          
     ## [43] pkgconfig_2.0.3          tools_4.6.0              htmltools_0.5.9

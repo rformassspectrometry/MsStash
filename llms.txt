@@ -9,7 +9,7 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 [![codecov](https://codecov.io/gh/rformassspectrometry/MsStash/graph/badge.svg?token=D8zjkGdgnY)](https://codecov.io/gh/rformassspectrometry/MsStash)
 [![:name status
 badge](https://rformassspectrometry.r-universe.dev/badges/:name)](https://rformassspectrometry.r-universe.dev/)
-[![license](https://img.shields.io/badge/license-Artistic--2.0-brightgreen.svg)](https://opensource.org/licenses/Artistic-2.0)
+[![license](https://img.shields.io/badge/license-GPL--3.0-brightgreen.svg)](https://opensource.org/license/gpl-3.0)
 
 ------------------------------------------------------------------------
 
@@ -121,11 +121,11 @@ If you’re planning to contribute:
 
 ## License
 
-This package is licensed under the **Artistic 2.0 License**: 📄
-<https://opensource.org/licenses/Artistic-2.0>
+This package is licensed under the **GPL 3.0 License**: 📄
+<https://opensource.org/license/gpl-3.0>
 
-Documentation (manuals, vignettes) is licensed under **CC BY-SA 4.0**:
-📄 <https://creativecommons.org/licenses/by-sa/4.0/>
+Documentation (manuals, vignettes) is licensed under **CC BY-NC-SA
+4.0**: 📄 <https://creativecommons.org/licenses/by-nc-sa/4.0/>
 
 ------------------------------------------------------------------------
 
