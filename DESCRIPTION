@@ -36,7 +36,7 @@ Suggests:
     alabaster.base,
     fs,
     testthat
-License: Artistic-2.0
+License: GPL-3
 Encoding: UTF-8
 VignetteBuilder: knitr
 BugReports: https://github.com/RforMassSpectrometry/MsStash/issues
