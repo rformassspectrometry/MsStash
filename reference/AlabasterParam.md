@@ -67,7 +67,7 @@ folder has to be deleted beforehand.
 ## See also
 
 Other MS object export and import formats.:
-[`PlainTextParam`](https://rformassspectrometry.github.io/MsStash/reference/PlainTextParam.md)
+[`PlainTextParam()`](https://rformassspectrometry.github.io/MsStash/reference/PlainTextParam.md)
 
 ## Author
 
@@ -82,7 +82,7 @@ a <- AlabasterParam(path = tempdir())
 a
 #> Object of class:  AlabasterParam 
 #>  Parameters:
-#>  - path: [1] "/tmp/RtmpLYjWZD"
+#>  - path: [1] "/tmp/RtmpTtyQn0"
 
-## See the package vignette for example implemetations and usage.
+## See the package vignette for example implementation and usage.
 ```

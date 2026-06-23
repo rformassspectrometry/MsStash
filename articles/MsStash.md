@@ -9,7 +9,7 @@ function. This R-specific binary data format can however not be used or
 read by other programming languages preventing thus the exchange of R
 data objects between software or programming languages. The *MsStash*
 package defines basic classes and generic methods to export and import
-mass spectrometry data objects in various storage formats aiming to
+mass spectrometry (MS) data objects in various storage formats aiming to
 facilitate data exchange between software. This includes, among other
 formats, also storage of data objects using Bioconductor’s
 *[alabaster.base](https://bioconductor.org/packages/3.24/alabaster.base)*
@@ -48,8 +48,7 @@ an instance of a `MsExperiment` class):
 
 The package can be installed with the *BiocManager* package. To install
 *BiocManager* use `install.packages("BiocManager")` and, after that,
-`BiocManager::install("RforMassSpectrometry/MsStash")` to install this
-package.
+`BiocManager::install("MsStash")` to install this package.
 
 ## Example implementations
 
@@ -373,7 +372,7 @@ library(fs)
 dir_tree(p)
 ```
 
-    ## /tmp/Rtmp9U6oi0/alabaster_export
+    ## /tmp/RtmpjsoPpC/alabaster_export
     ## ├── OBJECT
     ## ├── _environment.json
     ## ├── intensity
@@ -502,7 +501,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] fs_2.1.0              alabaster.base_1.13.0 MsStash_0.97.0       
+    ## [1] fs_2.1.0              alabaster.base_1.13.0 MsStash_0.99.0       
     ## [4] BiocStyle_2.41.0     
     ## 
     ## loaded via a namespace (and not attached):
@@ -512,9 +511,9 @@ sessionInfo()
     ## [10] yaml_2.3.12              fastmap_1.2.0            R6_2.6.1                
     ## [13] generics_0.1.4           ProtGenerics_1.45.0      knitr_1.51              
     ## [16] BiocGenerics_0.59.7      htmlwidgets_1.6.4        tibble_3.3.1            
-    ## [19] bookdown_0.46            desc_1.4.3               pillar_1.11.1           
+    ## [19] bookdown_0.47            desc_1.4.3               pillar_1.11.1           
     ## [22] bslib_0.11.0             rlang_1.2.0              cachem_1.1.0            
-    ## [25] xfun_0.58                sass_0.4.10              otel_0.2.0              
+    ## [25] xfun_0.59                sass_0.4.10              otel_0.2.0              
     ## [28] cli_3.6.6                magrittr_2.0.5           pkgdown_2.2.0.9000      
     ## [31] Rhdf5lib_2.1.0           digest_0.6.39            alabaster.schemas_1.13.0
     ## [34] rhdf5_2.57.1             lifecycle_1.0.5          vctrs_0.7.3             

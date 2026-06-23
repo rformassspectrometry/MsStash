@@ -50,3 +50,11 @@ return an instance of the class defined with `object`.
 ## Author
 
 Philippine Louail, Johannes Rainer, Laurent Gatto
+
+## Examples
+
+``` r
+
+## See the package vignette for examples and implementations of the generics
+library(MsStash)
+```

@@ -47,7 +47,7 @@ with parameter `object`.
 ## See also
 
 Other MS object export and import formats.:
-[`AlabasterParam`](https://rformassspectrometry.github.io/MsStash/reference/AlabasterParam.md)
+[`AlabasterParam()`](https://rformassspectrometry.github.io/MsStash/reference/AlabasterParam.md)
 
 ## Author
 
@@ -62,7 +62,7 @@ p <- PlainTextParam()
 p
 #> Object of class:  PlainTextParam 
 #>  Parameters:
-#>  - path: [1] "/tmp/RtmpLYjWZD"
+#>  - path: [1] "/tmp/RtmpTtyQn0"
 
 ## For example implementations and details see the package vignette
 ```
