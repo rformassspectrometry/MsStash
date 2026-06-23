@@ -82,7 +82,7 @@ a <- AlabasterParam(path = tempdir())
 a
 #> Object of class:  AlabasterParam 
 #>  Parameters:
-#>  - path: [1] "/tmp/RtmpfZ1VY0"
+#>  - path: [1] "/tmp/RtmpN20ZbI"
 
 ## See the package vignette for example implementation and usage.
 ```

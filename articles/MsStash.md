@@ -372,7 +372,7 @@ library(fs)
 dir_tree(p)
 ```
 
-    ## /tmp/RtmphCAoU4/alabaster_export
+    ## /tmp/Rtmpwp50MC/alabaster_export
     ## ├── OBJECT
     ## ├── _environment.json
     ## ├── intensity
