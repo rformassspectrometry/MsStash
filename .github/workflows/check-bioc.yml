@@ -22,10 +22,10 @@
 
 on:
   push:
-    paths-ignore:
-      - 'README.md'
+    branches:
+    - main
 
-name: R-CMD-check-bioc
+name: codecov-gh-pages
 
 ## These environment variables control whether to run GHA code later on that is
 ## specific to testthat, covr, and pkgdown.
