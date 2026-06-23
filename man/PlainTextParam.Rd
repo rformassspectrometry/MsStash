@@ -43,8 +43,8 @@ p
 ## For example implementations and details see the package vignette
 }
 \seealso{
-Other MS object export and import formats.: 
-\code{\link{AlabasterParam}}
+Other MS object export and import formats.:
+\code{\link[=AlabasterParam]{AlabasterParam()}}
 }
 \author{
 Philippine Louail, Johannes Rainer

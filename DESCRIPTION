@@ -1,6 +1,6 @@
 Package: MsStash
 Title: Infrastructure to serialize and restore mass spectrometry data objects
-Version: 0.97.0
+Version: 0.99.0
 Authors@R:
     c(person(given = "Johannes", family = "Rainer",
              email = "Johannes.Rainer@eurac.edu",
@@ -23,7 +23,8 @@ Description: The serialization mechanism of R allows to save and load R data
 	     including HDF5 and JSON-based formats defined by the Bioconductor
 	     *alabaster* package are supported. The file type can be defined
 	     and configured through a second argument `param` of the save/read
-	     methods.
+	     methods. Additional packages extending MsStash provide the
+	     implementations to serialize/restore MS data objects.
 Depends:
     R (>= 4.6.0)
 Imports:
@@ -43,8 +44,8 @@ BugReports: https://github.com/RforMassSpectrometry/MsStash/issues
 URL: https://github.com/RforMassSpectrometry/MsStash
 biocViews: Infrastructure, MassSpectrometry, Metabolomics, DataImport, Proteomics
 Roxygen: list(markdown=TRUE)
-RoxygenNote: 7.3.3
 Collate:
     'PlainTextParam.R'
     'AlabasterParam.R'
     'AllGenerics.R'
+Config/roxygen2/version: 8.0.0

@@ -40,6 +40,11 @@ from which the data should be restored/imported.
 Examples implementations of these methods are presented in the package
 vignette.
 }
+\examples{
+
+## See the package vignette for examples and implementations of the generics
+library(MsStash)
+}
 \author{
 Philippine Louail, Johannes Rainer, Laurent Gatto
 }
