@@ -62,7 +62,7 @@
 #' a <- AlabasterParam(path = tempdir())
 #' a
 #'
-#' ## See the package vignette for example implemetations and usage.
+#' ## See the package vignette for example implementation and usage.
 NULL
 
 #' @noRd

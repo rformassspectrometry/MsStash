@@ -23,9 +23,9 @@ Data objects in R can be serialized to disk in R's *Rds* format using the base R
 binary data format can however not be used or read by other programming
 languages preventing thus the exchange of R data objects between software or
 programming languages. The *MsStash* package defines basic classes and generic
-methods to export and import mass spectrometry data objects in various storage
-formats aiming to facilitate data exchange between software. This includes,
-among other formats, also storage of data objects using Bioconductor's
+methods to export and import mass spectrometry (MS) data objects in various
+storage formats aiming to facilitate data exchange between software. This
+includes, among other formats, also storage of data objects using Bioconductor's
 `r Biocpkg("alabaster.base")` package.
 
 For export or import of MS data objects, the `saveMsObject()` and
@@ -51,7 +51,7 @@ the data (assuming `x` was an instance of a `MsExperiment` class):
 
 The package can be installed with the *BiocManager* package. To install
 *BiocManager* use `install.packages("BiocManager")` and, after that,
-`BiocManager::install("RforMassSpectrometry/MsStash")` to install this package.
+`BiocManager::install("MsStash")` to install this package.
 
 # Example implementations
 

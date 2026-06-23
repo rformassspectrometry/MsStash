@@ -59,11 +59,11 @@ deleted beforehand.
 a <- AlabasterParam(path = tempdir())
 a
 
-## See the package vignette for example implemetations and usage.
+## See the package vignette for example implementation and usage.
 }
 \seealso{
-Other MS object export and import formats.: 
-\code{\link{PlainTextParam}}
+Other MS object export and import formats.:
+\code{\link[=PlainTextParam]{PlainTextParam()}}
 }
 \author{
 Johannes Rainer, Philippine Louail

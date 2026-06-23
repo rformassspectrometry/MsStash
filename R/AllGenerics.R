@@ -37,6 +37,11 @@
 #' @exportMethod readMsObject
 #'
 #' @name saveMsObject
+#'
+#' @examples
+#'
+#' ## See the package vignette for examples and implementations of the generics
+#' library(MsStash)
 NULL
 
 #' @rdname saveMsObject
