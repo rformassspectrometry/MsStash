@@ -6,6 +6,7 @@
 [![Test-R-universe](https://github.com/RforMassSpectrometry/MsStash/workflows/Test-R-universe/badge.svg)](https://github.com/RforMassSpectrometry/MsStash/actions?query=workflow%3ATest-R-universe)
 [![codecov](https://codecov.io/gh/rformassspectrometry/MsStash/graph/badge.svg?token=D8zjkGdgnY)](https://codecov.io/gh/rformassspectrometry/MsStash)
 [![:name status badge](https://rformassspectrometry.r-universe.dev/badges/:name)](https://rformassspectrometry.r-universe.dev/)
+[![years in bioc](http://bioconductor.org/shields/years-in-bioc/MsStash.svg)](https://bioconductor.org/packages/MsStash)
 [![license](https://img.shields.io/badge/license-GPL--3.0-brightgreen.svg)](https://opensource.org/license/gpl-3.0)
 
 ---
