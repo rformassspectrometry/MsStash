@@ -58,38 +58,11 @@ represent the data from a single mass spectrum. This `MySpectrum` class
 contains slots to hold the spectrum’s *m/z* and intensity values as well
 as some (limited) metadata.
 
-``` r
-
-#' Class definition
-setClass("MySpectrum",
-         slots = c(mz = "numeric",
-                   intensity = "numeric",
-                   rtime = "numeric",
-                   msl = "integer"),
-         prototype = prototype(
-             mz = numeric(),
-             intensity = numeric(),
-             rtime = numeric(),
-             msl = integer()))
-
-#' Default constructor function
-MySpectrum <- function(mz = numeric(), intensity = numeric(),
-                       rtime = numeric(), msl = integer()) {
-    stopifnot(length(mz) == length(intensity))
-    if (length(mz) && !length(rtime)) rtime <- NA_real_
-    if (length(mz) && !length(msl)) msl <- NA_integer_
-    new("MySpectrum", mz = mz, intensity = intensity, rtime = rtime,
-        msl = as.integer(msl))
-}
-```
+`#' Class definition`` ``setClass``(``"MySpectrum"``,`` `` slots ``=`` `[`c`](https://rdrr.io/r/base/c.html)`(``mz ``=`` ``"numeric"``,`` `` intensity ``=`` ``"numeric"``,`` `` rtime ``=`` ``"numeric"``,`` `` msl ``=`` ``"integer"``)``,`` `` prototype ``=`` ``prototype``(`` `` mz ``=`` `[`numeric`](https://rdrr.io/r/base/numeric.html)`(``)``,`` `` intensity ``=`` `[`numeric`](https://rdrr.io/r/base/numeric.html)`(``)``,`` `` rtime ``=`` `[`numeric`](https://rdrr.io/r/base/numeric.html)`(``)``,`` `` msl ``=`` `[`integer`](https://rdrr.io/r/base/integer.html)`(``)``)``)`` `` ``#' Default constructor function`` ``MySpectrum`` ``<-`` ``function``(``mz`` ``=`` `[`numeric`](https://rdrr.io/r/base/numeric.html)`(``)``, ``intensity`` ``=`` `[`numeric`](https://rdrr.io/r/base/numeric.html)`(``)``,`` `` ``rtime`` ``=`` `[`numeric`](https://rdrr.io/r/base/numeric.html)`(``)``, ``msl`` ``=`` `[`integer`](https://rdrr.io/r/base/integer.html)`(``)``)`` ``{`` `` `[`stopifnot`](https://rdrr.io/r/base/stopifnot.html)`(`[`length`](https://rdrr.io/r/base/length.html)`(``mz``)`` ``==`` `[`length`](https://rdrr.io/r/base/length.html)`(``intensity``)``)`` `` ``if`` ``(`[`length`](https://rdrr.io/r/base/length.html)`(``mz``)`` ``&&`` ``!`[`length`](https://rdrr.io/r/base/length.html)`(``rtime``)``)`` ``rtime`` ``<-`` ``NA_real_`` `` ``if`` ``(`[`length`](https://rdrr.io/r/base/length.html)`(``mz``)`` ``&&`` ``!`[`length`](https://rdrr.io/r/base/length.html)`(``msl``)``)`` ``msl`` ``<-`` ``NA_integer_`` `` ``new``(``"MySpectrum"``, mz ``=`` ``mz``, intensity ``=`` ``intensity``, rtime ``=`` ``rtime``,`` `` msl ``=`` `[`as.integer`](https://rdrr.io/r/base/integer.html)`(``msl``)``)`` ``}`
 
 We can now create an example `MySpectrum` object.
 
-``` r
-
-s <- MySpectrum(c(1.4, 1.6, 1.9, 2.56), c(123.1, 1235.3, 12.45, 51.5))
-s
-```
+`s`` ``<-`` ``MySpectrum``(`[`c`](https://rdrr.io/r/base/c.html)`(``1.4``, ``1.6``, ``1.9``, ``2.56``)``, `[`c`](https://rdrr.io/r/base/c.html)`(``123.1``, ``1235.3``, ``12.45``, ``51.5``)``)`` ``s`
 
     ## An object of class "MySpectrum"
     ## Slot "mz":
@@ -119,10 +92,7 @@ should:
 Both methods support also `...`, hence, if needed, additional parameters
 can be added to an implementation of the generic method if needed.
 
-``` r
-
-library(MsStash)
-```
+[`library`](https://rdrr.io/r/base/library.html)`(`[`MsStash`](https://github.com/RforMassSpectrometry/MsStash)`)`
 
 ### `PlainTextParam`
 
@@ -148,45 +118,16 @@ custom format we define: the metadata if first written to the file, one
 line per metadata item followed by the *m/z* and intensity values, each
 *m/z*-intensity pair in one line separated by a tabulator.
 
-``` r
-
-#' Write example class to a plain text file
-setMethod("saveMsObject", signature(object = "MySpectrum",
-                                    param = "PlainTextParam"),
-          function(object, param) {
-              dir.create(path = param@path, recursive = TRUE,
-                         showWarnings = FALSE)
-              fl <- file.path(param@path, "my_spectrum.txt")
-              if (file.exists(fl))
-                  stop("Overwriting an existing result object is not ",
-                       "supported.")
-              ## Write the type of object as a comment followed by the
-              ## metadata.
-              writeLines(c(paste0("# ", class(object)[1L]),
-                           paste0("rtime:", object@rtime),
-                           paste0("msl:", object@msl)), con = fl)
-              ## Write the peak data, i.e. m/z and intensity values
-              write.table(cbind(object@mz, object@intensity), file = fl,
-                          sep = "\t", append = TRUE, col.names = FALSE,
-                          row.names = FALSE)
-          })
-```
+`#' Write example class to a plain text file`` ``setMethod``(``"saveMsObject"``, ``signature``(``object ``=`` ``"MySpectrum"``,`` `` param ``=`` ``"PlainTextParam"``)``,`` `` ``function``(``object``, ``param``)`` ``{`` `` `[`dir.create`](https://rdrr.io/r/base/files2.html)`(``path ``=`` ``param``@``path``, recursive ``=`` ``TRUE``,`` `` showWarnings ``=`` ``FALSE``)`` `` ``fl`` ``<-`` `[`file.path`](https://rdrr.io/r/base/file.path.html)`(``param``@``path``, ``"my_spectrum.txt"``)`` `` ``if`` ``(`[`file.exists`](https://rdrr.io/r/base/files.html)`(``fl``)``)`` `` `[`stop`](https://rdrr.io/r/base/stop.html)`(``"Overwriting an existing result object is not "``,`` `` ``"supported."``)`` `` ``## Write the type of object as a comment followed by the`` `` ``## metadata.`` `` `[`writeLines`](https://rdrr.io/r/base/writeLines.html)`(`[`c`](https://rdrr.io/r/base/c.html)`(`[`paste0`](https://rdrr.io/r/base/paste.html)`(``"# "``, `[`class`](https://rdrr.io/r/base/class.html)`(``object``)``[``1L``]``)``,`` `` `[`paste0`](https://rdrr.io/r/base/paste.html)`(``"rtime:"``, ``object``@``rtime``)``,`` `` `[`paste0`](https://rdrr.io/r/base/paste.html)`(``"msl:"``, ``object``@``msl``)``)``, con ``=`` ``fl``)`` `` ``## Write the peak data, i.e. m/z and intensity values`` `` `[`write.table`](https://rdrr.io/r/utils/write.table.html)`(`[`cbind`](https://rdrr.io/r/base/cbind.html)`(``object``@``mz``, ``object``@``intensity``)``, file ``=`` ``fl``,`` `` sep ``=`` ``"\t"``, append ``=`` ``TRUE``, col.names ``=`` ``FALSE``,`` `` row.names ``=`` ``FALSE``)`` `` ``}``)`
 
 We next export our example object `s` with the `saveMsData()` method to
 a temporary folder.
 
-``` r
-
-p <- PlainTextParam(path = file.path(tempdir(), "text_format"))
-saveMsObject(s, p)
-```
+`p`` ``<-`` `[`PlainTextParam`](https://rformassspectrometry.github.io/MsStash/reference/PlainTextParam.md)`(``path ``=`` `[`file.path`](https://rdrr.io/r/base/file.path.html)`(`[`tempdir`](https://rdrr.io/r/base/tempfile.html)`(``)``, ``"text_format"``)``)`` `[`saveMsObject`](https://rformassspectrometry.github.io/MsStash/reference/saveMsObject.md)`(``s``, ``p``)`
 
 The data was thus exported to this text file. The individual lines are:
 
-``` r
-
-readLines(file.path(p@path, "my_spectrum.txt"))
-```
+[`readLines`](https://rdrr.io/r/base/readLines.html)`(`[`file.path`](https://rdrr.io/r/base/file.path.html)`(``p``@``path``, ``"my_spectrum.txt"``)``)`
 
     ## [1] "# MySpectrum" "rtime:NA"     "msl:NA"       "1.4\t123.1"   "1.6\t1235.3" 
     ## [6] "1.9\t12.45"   "2.56\t51.5"
@@ -197,36 +138,13 @@ method for this class. This function will read the text file content and
 assign the imported values to the different slots of the `MySpectrum`
 class.
 
-``` r
-
-#' Read example object from plain text file storage format
-setMethod("readMsObject", signature(object = "MySpectrum",
-                                    param = "PlainTextParam"),
-          function(object, param) {
-              fl <- file.path(param@path, "my_spectrum.txt")
-              if (!file.exists(fl))
-                  stop("my_spectrum.txt not found in the provided path")
-              l <- readLines(fl, n = 3) # read the comment and the metadata
-              p <- read.table(fl, sep = "\t", skip = 3)
-              MySpectrum(
-                  mz = p[, 1L], intensity = p[, 2L],
-                  rtime = suppressWarnings(
-                      as.numeric(sub("rtime:", "", l[2], fixed = TRUE))),
-                  msl = suppressWarnings(
-                      as.integer(sub("msl:", "", l[3], fixed = TRUE))))
-          })
-```
+`#' Read example object from plain text file storage format`` ``setMethod``(``"readMsObject"``, ``signature``(``object ``=`` ``"MySpectrum"``,`` `` param ``=`` ``"PlainTextParam"``)``,`` `` ``function``(``object``, ``param``)`` ``{`` `` ``fl`` ``<-`` `[`file.path`](https://rdrr.io/r/base/file.path.html)`(``param``@``path``, ``"my_spectrum.txt"``)`` `` ``if`` ``(``!`[`file.exists`](https://rdrr.io/r/base/files.html)`(``fl``)``)`` `` `[`stop`](https://rdrr.io/r/base/stop.html)`(``"my_spectrum.txt not found in the provided path"``)`` `` ``l`` ``<-`` `[`readLines`](https://rdrr.io/r/base/readLines.html)`(``fl``, n ``=`` ``3``)`` ``# read the comment and the metadata`` `` ``p`` ``<-`` `[`read.table`](https://rdrr.io/r/utils/read.table.html)`(``fl``, sep ``=`` ``"\t"``, skip ``=`` ``3``)`` `` ``MySpectrum``(`` `` mz ``=`` ``p``[``, ``1L``]``, intensity ``=`` ``p``[``, ``2L``]``,`` `` rtime ``=`` `[`suppressWarnings`](https://rdrr.io/r/base/warning.html)`(`` `` `[`as.numeric`](https://rdrr.io/r/base/numeric.html)`(`[`sub`](https://rdrr.io/r/base/grep.html)`(``"rtime:"``, ``""``, ``l``[``2``]``, fixed ``=`` ``TRUE``)``)``)``,`` `` msl ``=`` `[`suppressWarnings`](https://rdrr.io/r/base/warning.html)`(`` `` `[`as.integer`](https://rdrr.io/r/base/integer.html)`(`[`sub`](https://rdrr.io/r/base/grep.html)`(``"msl:"``, ``""``, ``l``[``3``]``, fixed ``=`` ``TRUE``)``)``)``)`` `` ``}``)`
 
 We can now restore our `MySpectrum` object with the
 [`readMsObject()`](https://rformassspectrometry.github.io/MsStash/reference/saveMsObject.md)
 method from the exported text file:
 
-``` r
-
-p <- PlainTextParam(path = file.path(tempdir(), "text_format"))
-b <- readMsObject(MySpectrum(), p)
-b
-```
+`p`` ``<-`` `[`PlainTextParam`](https://rformassspectrometry.github.io/MsStash/reference/PlainTextParam.md)`(``path ``=`` `[`file.path`](https://rdrr.io/r/base/file.path.html)`(`[`tempdir`](https://rdrr.io/r/base/tempfile.html)`(``)``, ``"text_format"``)``)`` ``b`` ``<-`` `[`readMsObject`](https://rformassspectrometry.github.io/MsStash/reference/saveMsObject.md)`(``MySpectrum``(``)``, ``p``)`` ``b`
 
     ## An object of class "MySpectrum"
     ## Slot "mz":
@@ -279,22 +197,7 @@ to save individual slots or parent/child classes in sub-directories of
 [`saveObject()`](https://rdrr.io/pkg/alabaster.base/man/saveObject.html)
 needs to be defined.
 
-``` r
-
-library(alabaster.base)
-
-setMethod("saveObject", "MySpectrum", function(x, path, ...) {
-    ## Create the directory where to save the data
-    dir.create(path = path, recursive = TRUE, showWarnings = FALSE)
-    ## Create an "object" file; this defines the type of object stored in path
-    saveObjectFile(path, "my_spectrum")
-    ## save each slot into it's own directory
-    altSaveObject(x@mz, path = file.path(path, "mz"))
-    altSaveObject(x@intensity, path = file.path(path, "intensity"))
-    altSaveObject(x@rtime, path = file.path(path, "retention_time"))
-    altSaveObject(x@msl, path = file.path(path, "ms_level"))
-})
-```
+[`library`](https://rdrr.io/r/base/library.html)`(`[`alabaster.base`](https://github.com/ArtifactDB/alabaster.base)`)`` `` ``setMethod``(``"saveObject"``, ``"MySpectrum"``, ``function``(``x``, ``path``, ``...``)`` ``{`` `` ``## Create the directory where to save the data`` `` `[`dir.create`](https://rdrr.io/r/base/files2.html)`(``path ``=`` ``path``, recursive ``=`` ``TRUE``, showWarnings ``=`` ``FALSE``)`` `` ``## Create an "object" file; this defines the type of object stored in path`` `` `[`saveObjectFile`](https://rdrr.io/pkg/alabaster.base/man/readObjectFile.html)`(``path``, ``"my_spectrum"``)`` `` ``## save each slot into it's own directory`` `` `[`altSaveObject`](https://rdrr.io/pkg/alabaster.base/man/altSaveObject.html)`(``x``@``mz``, path ``=`` `[`file.path`](https://rdrr.io/r/base/file.path.html)`(``path``, ``"mz"``)``)`` `` `[`altSaveObject`](https://rdrr.io/pkg/alabaster.base/man/altSaveObject.html)`(``x``@``intensity``, path ``=`` `[`file.path`](https://rdrr.io/r/base/file.path.html)`(``path``, ``"intensity"``)``)`` `` `[`altSaveObject`](https://rdrr.io/pkg/alabaster.base/man/altSaveObject.html)`(``x``@``rtime``, path ``=`` `[`file.path`](https://rdrr.io/r/base/file.path.html)`(``path``, ``"retention_time"``)``)`` `` `[`altSaveObject`](https://rdrr.io/pkg/alabaster.base/man/altSaveObject.html)`(``x``@``msl``, path ``=`` `[`file.path`](https://rdrr.io/r/base/file.path.html)`(``path``, ``"ms_level"``)``)`` ``}``)`
 
 We next need to implement a *validation function* for the stash
 (directory). For our example we simply check that the `path` contains
@@ -303,23 +206,7 @@ needs then to be registered with the
 [`registerValidateObjectFunction()`](https://rdrr.io/pkg/alabaster.base/man/validateObject.html)
 method for our class.
 
-``` r
-
-#' Define a helper function to check that the folder contains all
-#' expected sub-directories.
-validateMySpectrum <- function(path, metadata) {
-    if (!dir.exists(path))
-        stop("Directory ", path, " does not exist")
-    req_dir <- c("mz", "intensity", "retention_time", "ms_level")
-    if (any(miss <- !dir.exists(file.path(path, req_dir))))
-        stop("Required directories ",
-             paste0("\"", req_dir[miss], "\"", collapse = ", "),
-             " not found in ", path)
-}
-
-#' Register the validation function
-registerValidateObjectFunction("my_spectrum", validateMySpectrum)
-```
+`#' Define a helper function to check that the folder contains all`` ``#' expected sub-directories.`` ``validateMySpectrum`` ``<-`` ``function``(``path``, ``metadata``)`` ``{`` `` ``if`` ``(``!`[`dir.exists`](https://rdrr.io/r/base/files2.html)`(``path``)``)`` `` `[`stop`](https://rdrr.io/r/base/stop.html)`(``"Directory "``, ``path``, ``" does not exist"``)`` `` ``req_dir`` ``<-`` `[`c`](https://rdrr.io/r/base/c.html)`(``"mz"``, ``"intensity"``, ``"retention_time"``, ``"ms_level"``)`` `` ``if`` ``(`[`any`](https://rdrr.io/r/base/any.html)`(``miss`` ``<-`` ``!`[`dir.exists`](https://rdrr.io/r/base/files2.html)`(`[`file.path`](https://rdrr.io/r/base/file.path.html)`(``path``, ``req_dir``)``)``)``)`` `` `[`stop`](https://rdrr.io/r/base/stop.html)`(``"Required directories "``,`` `` `[`paste0`](https://rdrr.io/r/base/paste.html)`(``"\""``, ``req_dir``[``miss``]``, ``"\""``, collapse ``=`` ``", "``)``,`` `` ``" not found in "``, ``path``)`` ``}`` `` ``#' Register the validation function`` `[`registerValidateObjectFunction`](https://rdrr.io/pkg/alabaster.base/man/validateObject.html)`(``"my_spectrum"``, ``validateMySpectrum``)`
 
     ## NULL
 
@@ -328,23 +215,7 @@ then register this function with *alabaster*’s
 [`registerReadObjectFunction()`](https://rdrr.io/pkg/alabaster.base/man/readObject.html)
 function.
 
-``` r
-
-#' Define a function that can read from an alabaster-based serialization
-#' of `MySpectrum` objects
-readMySpectrum <- function(path, metadata, ...) {
-    validateMySpectrum(path)
-    ## Read the data from individual sub-directories
-    mz <- altReadObject(file.path(path, "mz"))
-    int <- altReadObject(file.path(path, "intensity"))
-    rtime <- altReadObject(file.path(path, "retention_time"))
-    msl <- altReadObject(file.path(path, "ms_level"))
-    MySpectrum(mz = mz, intensity = int, rtime = rtime, msl = msl)
-}
-
-#' Register the read function
-registerReadObjectFunction("my_spectrum", readMySpectrum)
-```
+`#' Define a function that can read from an alabaster-based serialization`` ``` #' of `MySpectrum` objects ``` ``readMySpectrum`` ``<-`` ``function``(``path``, ``metadata``, ``...``)`` ``{`` `` ``validateMySpectrum``(``path``)`` `` ``## Read the data from individual sub-directories`` `` ``mz`` ``<-`` `[`altReadObject`](https://rdrr.io/pkg/alabaster.base/man/altReadObject.html)`(`[`file.path`](https://rdrr.io/r/base/file.path.html)`(``path``, ``"mz"``)``)`` `` ``int`` ``<-`` `[`altReadObject`](https://rdrr.io/pkg/alabaster.base/man/altReadObject.html)`(`[`file.path`](https://rdrr.io/r/base/file.path.html)`(``path``, ``"intensity"``)``)`` `` ``rtime`` ``<-`` `[`altReadObject`](https://rdrr.io/pkg/alabaster.base/man/altReadObject.html)`(`[`file.path`](https://rdrr.io/r/base/file.path.html)`(``path``, ``"retention_time"``)``)`` `` ``msl`` ``<-`` `[`altReadObject`](https://rdrr.io/pkg/alabaster.base/man/altReadObject.html)`(`[`file.path`](https://rdrr.io/r/base/file.path.html)`(``path``, ``"ms_level"``)``)`` `` ``MySpectrum``(``mz ``=`` ``mz``, intensity ``=`` ``int``, rtime ``=`` ``rtime``, msl ``=`` ``msl``)`` ``}`` `` ``#' Register the read function`` `[`registerReadObjectFunction`](https://rdrr.io/pkg/alabaster.base/man/readObject.html)`(``"my_spectrum"``, ``readMySpectrum``)`
 
 Registration of the validation and read functions is generally done in
 the extension package’s `onLoad()` function.
@@ -354,25 +225,14 @@ With these functions defined and registered, we can store an instance of
 [`saveObject()`](https://rdrr.io/pkg/alabaster.base/man/saveObject.html)
 method:
 
-``` r
-
-#' Define the path where we want to export out data
-p <- file.path(tempdir(), "alabaster_export")
-
-#' Save the object
-saveObject(s, path = p)
-```
+`#' Define the path where we want to export out data`` ``p`` ``<-`` `[`file.path`](https://rdrr.io/r/base/file.path.html)`(`[`tempdir`](https://rdrr.io/r/base/tempfile.html)`(``)``, ``"alabaster_export"``)`` `` ``#' Save the object`` `[`saveObject`](https://rdrr.io/pkg/alabaster.base/man/saveObject.html)`(``s``, path ``=`` ``p``)`
 
 This saved the object’s content to the directory specified with `path`.
 The content of this folder is:
 
-``` r
+[`library`](https://rdrr.io/r/base/library.html)`(`[`fs`](https://fs.r-lib.org)`)`` `[`dir_tree`](https://fs.r-lib.org/reference/dir_tree.html)`(``p``)`
 
-library(fs)
-dir_tree(p)
-```
-
-    ## /tmp/Rtmpwp50MC/alabaster_export
+    ## /tmp/RtmpxaSMg3/alabaster_export
     ## ├── OBJECT
     ## ├── _environment.json
     ## ├── intensity
@@ -390,11 +250,7 @@ dir_tree(p)
 
 We can read the serialized object again as a `MySpectrum` object:
 
-``` r
-
-b <- readObject(p)
-b
-```
+`b`` ``<-`` `[`readObject`](https://rdrr.io/pkg/alabaster.base/man/readObject.html)`(``p``)`` ``b`
 
     ## An object of class "MySpectrum"
     ## Slot "mz":
@@ -416,47 +272,19 @@ and
 methods for `MySpectrum` and `AlabasterParam`. These can simply re-use
 the functions implemented above.
 
-``` r
-
-#' Write example class to a plain text file
-setMethod("saveMsObject", signature(object = "MySpectrum",
-                                    param = "AlabasterParam"),
-          function(object, param) {
-              if (file.exists(file.path(param@path, "OBJECT")))
-                  stop("'path' contains already an MS data stash. Overwriting",
-                       " is not supported. Please remove 'path' first.")
-              saveObject(object, param@path)
-          })
-
-#' Read example object from plain text file storage format
-setMethod("readMsObject", signature(object = "MySpectrum",
-                                    param = "AlabasterParam"),
-          function(object, param) {
-              readMySpectrum(param@path)
-          })
-```
+`#' Write example class to a plain text file`` ``setMethod``(``"saveMsObject"``, ``signature``(``object ``=`` ``"MySpectrum"``,`` `` param ``=`` ``"AlabasterParam"``)``,`` `` ``function``(``object``, ``param``)`` ``{`` `` ``if`` ``(`[`file.exists`](https://rdrr.io/r/base/files.html)`(`[`file.path`](https://rdrr.io/r/base/file.path.html)`(``param``@``path``, ``"OBJECT"``)``)``)`` `` `[`stop`](https://rdrr.io/r/base/stop.html)`(``"'path' contains already an MS data stash. Overwriting"``,`` `` ``" is not supported. Please remove 'path' first."``)`` `` `[`saveObject`](https://rdrr.io/pkg/alabaster.base/man/saveObject.html)`(``object``, ``param``@``path``)`` `` ``}``)`` `` ``#' Read example object from plain text file storage format`` ``setMethod``(``"readMsObject"``, ``signature``(``object ``=`` ``"MySpectrum"``,`` `` param ``=`` ``"AlabasterParam"``)``,`` `` ``function``(``object``, ``param``)`` ``{`` `` ``readMySpectrum``(``param``@``path``)`` `` ``}``)`
 
 We can now stash our MS object in either the text file-based format
 (`PlainTextParam`) or the alabaster-based format (`AlabasterParam`).
 Below we write it using the alabaster approach.
 
-``` r
-
-p <- file.path(tempdir(), "alabaster_format_2")
-ap <- AlabasterParam(p)
-
-saveMsObject(s, ap)
-```
+`p`` ``<-`` `[`file.path`](https://rdrr.io/r/base/file.path.html)`(`[`tempdir`](https://rdrr.io/r/base/tempfile.html)`(``)``, ``"alabaster_format_2"``)`` ``ap`` ``<-`` `[`AlabasterParam`](https://rformassspectrometry.github.io/MsStash/reference/AlabasterParam.md)`(``p``)`` `` `[`saveMsObject`](https://rformassspectrometry.github.io/MsStash/reference/saveMsObject.md)`(``s``, ``ap``)`
 
 To read the data back we can then use
 [`readMsObject()`](https://rformassspectrometry.github.io/MsStash/reference/saveMsObject.md)
 specifying in addition the type of object we want to read.
 
-``` r
-
-b <- readMsObject(MySpectrum(), ap)
-b
-```
+`b`` ``<-`` `[`readMsObject`](https://rformassspectrometry.github.io/MsStash/reference/saveMsObject.md)`(``MySpectrum``(``)``, ``ap``)`` ``b`
 
     ## An object of class "MySpectrum"
     ## Slot "mz":
@@ -473,12 +301,9 @@ b
 
 ## Session information
 
-``` r
+[`sessionInfo`](https://rdrr.io/r/utils/sessionInfo.html)`(``)`
 
-sessionInfo()
-```
-
-    ## R version 4.6.0 (2026-04-24)
+    ## R version 4.6.1 (2026-06-24)
     ## Platform: x86_64-pc-linux-gnu
     ## Running under: Ubuntu 24.04.4 LTS
     ## 
@@ -501,22 +326,22 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] fs_2.1.0              alabaster.base_1.13.0 MsStash_0.99.0       
+    ## [1] fs_2.1.0              alabaster.base_1.13.2 MsStash_0.99.0       
     ## [4] BiocStyle_2.41.0     
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] jsonlite_2.0.0           compiler_4.6.0           BiocManager_1.30.27     
-    ##  [4] crayon_1.5.3             Rcpp_1.1.1-1.1           rhdf5filters_1.25.0     
+    ##  [1] jsonlite_2.0.0           compiler_4.6.1           BiocManager_1.30.27     
+    ##  [4] crayon_1.5.3             Rcpp_1.1.2               rhdf5filters_1.25.4     
     ##  [7] jquerylib_0.1.4          systemfonts_1.3.2        textshaping_1.0.5       
     ## [10] yaml_2.3.12              fastmap_1.2.0            R6_2.6.1                
     ## [13] generics_0.1.4           ProtGenerics_1.45.0      knitr_1.51              
-    ## [16] BiocGenerics_0.59.7      htmlwidgets_1.6.4        tibble_3.3.1            
+    ## [16] BiocGenerics_0.59.12     htmlwidgets_1.6.4        tibble_3.3.1            
     ## [19] bookdown_0.47            desc_1.4.3               pillar_1.11.1           
-    ## [22] bslib_0.11.0             rlang_1.2.0              cachem_1.1.0            
-    ## [25] xfun_0.59                sass_0.4.10              otel_0.2.0              
-    ## [28] cli_3.6.6                magrittr_2.0.5           pkgdown_2.2.0.9000      
+    ## [22] bslib_0.12.0             rlang_1.3.0              cachem_1.1.0            
+    ## [25] xfun_0.60                sass_0.4.10              otel_0.2.0              
+    ## [28] cli_3.6.6                magrittr_2.0.5           pkgdown_2.2.1.9000      
     ## [31] Rhdf5lib_2.1.0           digest_0.6.39            alabaster.schemas_1.13.0
-    ## [34] rhdf5_2.57.1             lifecycle_1.0.5          vctrs_0.7.3             
-    ## [37] S4Vectors_0.51.3         glue_1.8.1               evaluate_1.0.5          
-    ## [40] ragg_1.5.2               stats4_4.6.0             rmarkdown_2.31          
-    ## [43] pkgconfig_2.0.3          tools_4.6.0              htmltools_0.5.9
+    ## [34] rhdf5_2.57.12            lifecycle_1.0.5          vctrs_0.7.3             
+    ## [37] S4Vectors_0.51.7         glue_1.8.1               evaluate_1.0.5          
+    ## [40] ragg_1.5.2               stats4_4.6.1             rmarkdown_2.31          
+    ## [43] pkgconfig_2.0.3          tools_4.6.1              htmltools_0.5.9
