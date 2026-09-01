@@ -232,7 +232,7 @@ The content of this folder is:
 
 [`library`](https://rdrr.io/r/base/library.html)`(`[`fs`](https://fs.r-lib.org)`)`` `[`dir_tree`](https://fs.r-lib.org/reference/dir_tree.html)`(``p``)`
 
-    ## /tmp/RtmpxaSMg3/alabaster_export
+    ## /tmp/Rtmpp8SYWc/alabaster_export
     ## ├── OBJECT
     ## ├── _environment.json
     ## ├── intensity
@@ -336,12 +336,12 @@ specifying in addition the type of object we want to read.
     ## [10] yaml_2.3.12              fastmap_1.2.0            R6_2.6.1                
     ## [13] generics_0.1.4           ProtGenerics_1.45.0      knitr_1.51              
     ## [16] BiocGenerics_0.59.12     htmlwidgets_1.6.4        tibble_3.3.1            
-    ## [19] bookdown_0.47            desc_1.4.3               pillar_1.11.1           
+    ## [19] bookdown_0.48            desc_1.4.3               pillar_1.11.1           
     ## [22] bslib_0.12.0             rlang_1.3.0              cachem_1.1.0            
     ## [25] xfun_0.60                sass_0.4.10              otel_0.2.0              
     ## [28] cli_3.6.6                magrittr_2.0.5           pkgdown_2.2.1.9000      
     ## [31] Rhdf5lib_2.1.0           digest_0.6.39            alabaster.schemas_1.13.0
     ## [34] rhdf5_2.57.12            lifecycle_1.0.5          vctrs_0.7.3             
-    ## [37] S4Vectors_0.51.7         glue_1.8.1               evaluate_1.0.5          
+    ## [37] S4Vectors_0.51.9         glue_1.8.1               evaluate_1.0.5          
     ## [40] ragg_1.5.2               stats4_4.6.1             rmarkdown_2.31          
     ## [43] pkgconfig_2.0.3          tools_4.6.1              htmltools_0.5.9
