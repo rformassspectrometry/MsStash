@@ -97,7 +97,7 @@ involved!
 
 ------------------------------------------------------------------------
 
-## Contributing
+## 🤝 Contributing
 
 We appreciate contributions of all kinds — from bug fixes and tests to
 documentation and new format support.
@@ -120,6 +120,12 @@ If you’re planning to contribute:
       method
 
     - ## Tests in `tests/testthat/`
+
+### 📜 Code of Conduct
+
+We follow the [**RforMassSpectrometry Code of
+Conduct**](https://rformassspectrometry.github.io/RforMassSpectrometry/articles/RforMassSpectrometry.html#code-of-conduct)
+to maintain an inclusive and respectful community.
 
 ## License
 
