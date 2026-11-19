@@ -346,7 +346,7 @@ The content of this folder is:
 [`library`](https://rdrr.io/r/base/library.html)`(`[`fs`](https://fs.r-lib.org)`)`\
 [`dir_tree`](https://fs.r-lib.org/reference/dir_tree.html)`(``p``)`
 
-    ## /tmp/Rtmpn54p85/alabaster_export
+    ## /tmp/RtmpAJbKvE/alabaster_export
     ## ├── OBJECT
     ## ├── _environment.json
     ## ├── intensity

@@ -62,7 +62,7 @@ p <- PlainTextParam()
 p
 #> Object of class:  PlainTextParam 
 #>  Parameters:
-#>  - path: [1] "/tmp/RtmpmJ5bmC"
+#>  - path: [1] "/tmp/RtmpFfipSz"
 
 ## For example implementations and details see the package vignette
 ```
